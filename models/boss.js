@@ -1,26 +1,47 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Boss extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('MaplestoryDatabase','postgres','dog123!', {
+  host: 'localhost',
+  port: 5432,
+  dialect: 'postgres'
+});
+
+const boss = sequelize.define('Boss',{
+  bossID: {
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataTypes.INTEGER
+  },
+  bossName:{ 
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  bossImage:{ 
+     type: DataTypes.STRING,
+    allowNull: false
+   },
+   bossLevel:{ 
+     type: DataTypes.STRING,
+    allowNull: false
+  },
+  partyName:{ 
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  partyID:{ 
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
-  Boss.init({
-    id: DataTypes.INTEGER,
-    partyId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    difficulty: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Boss',
-  });
-  return Boss;
-};
+},{freezeTableName:true,timeStamp:false,createdAt:false});
+
+//Creating Table to Database
+async function createModel(){
+  try {
+    await sequelize.sync({force:true});
+    await console.log('Boss Table was successfully updated.');
+    await sequelize.close();
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+createModel();

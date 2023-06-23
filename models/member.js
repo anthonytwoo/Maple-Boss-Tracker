@@ -1,24 +1,31 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Member extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('MaplestoryDatabase','postgres','dog123!', {
+    host: 'localhost',
+    port: 5432,
+    dialect: 'postgres'
+  });
+
+const member = sequelize.define('Member',{
+    memberID: {
+        primaryKey: true,
+        autoIncrement: true,
+        type: DataTypes.INTEGER
+      },
+      memberName:{ 
+        type: DataTypes.STRING,
+        allowNull: false
+      }
+},{freezeTableName:true,timeStamp:false,createdAt:false});
+ 
+//Creating Table to Database
+async function createModel(){
+    try {
+      await sequelize.sync({force:true});
+      await console.log('Member Table was successfully updated.');
+      await sequelize.close();
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
     }
   }
-  Member.init({
-    name: DataTypes.STRING,
-    id: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Member',
-  });
-  return Member;
-};
+
+  createModel();
